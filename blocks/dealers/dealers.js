@@ -71,10 +71,7 @@ function createDealerCard(dealer) {
   const bookBtn = card.querySelector('.book-drive-btn');
   bookBtn.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('select-dealer', { detail: dealer }));
-    const leadFormEl = document.querySelector('.lead-form');
-    if (leadFormEl) {
-      leadFormEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    window.dispatchEvent(new CustomEvent('open-lead-form'));
   });
 
   return card;

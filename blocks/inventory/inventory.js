@@ -112,10 +112,7 @@ function createInventoryCard(item) {
   const driveBtn = card.querySelector('.schedule-drive-btn');
   driveBtn.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('select-model', { detail: item }));
-    const leadFormEl = document.querySelector('.lead-form');
-    if (leadFormEl) {
-      leadFormEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    window.dispatchEvent(new CustomEvent('open-lead-form'));
   });
 
   return card;

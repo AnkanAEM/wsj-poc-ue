@@ -1,3 +1,8 @@
+/* Body scroll lock when modal is open */
+body.lead-form-modal-open {
+  overflow: hidden !important;
+}
+
 .lead-form {
   --lead-primary: #8b5cf6;
   --lead-primary-hover: #7c3aed;
@@ -9,24 +14,96 @@
   --lead-radius: 16px;
   --lead-glow: 0 12px 36px 0 rgb(139 92 246 / 25%);
 
-  margin: 3rem auto;
-  max-width: 800px;
-  padding: 0 1rem;
+  margin: 0;
+  padding: 0;
   font-family: inherit;
   color: var(--lead-text);
 }
 
+/* Modal Overlay Mode (Default when not always-show) */
+.lead-form .lead-form-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgb(15 23 42 / 80%);
+  backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+  opacity: 1;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.lead-form .lead-form-modal-overlay.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Inline Container Mode (When always-show is enabled) */
+.lead-form .lead-form-container {
+  margin: 3rem auto;
+  max-width: 800px;
+  padding: 0 1rem;
+}
+
 .lead-form .lead-form-card {
+  position: relative;
+  width: 100%;
+  max-width: 750px;
   background: linear-gradient(145deg, #111827 0%, #1e1b4b 100%);
-  border: 1px solid rgb(255 255 255 / 10%);
+  border: 1px solid rgb(255 255 255 / 12%);
   border-radius: var(--lead-radius);
   padding: 2.25rem;
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 50%);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 70%);
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: lead-modal-scale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes lead-modal-scale {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.lead-form .lead-form-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 8%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  color: var(--lead-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.lead-form .lead-form-close-btn:hover {
+  background: rgb(255 255 255 / 20%);
+  color: #fff;
+  transform: rotate(90deg);
 }
 
 .lead-form .lead-form-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
+  padding-right: 1.5rem;
 }
 
 .lead-form .lead-form-badge {
@@ -45,7 +122,7 @@
 
 .lead-form .lead-form-title {
   margin: 0 0 0.5rem;
-  font-size: 2rem;
+  font-size: 1.85rem;
   font-weight: 800;
   color: #fff;
   letter-spacing: -0.02em;

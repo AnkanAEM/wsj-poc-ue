@@ -26,6 +26,13 @@
           "label": "Form Title",
           "valueType": "string",
           "value": "Schedule a Test Drive"
+        },
+        {
+          "component": "boolean",
+          "name": "alwaysShow",
+          "label": "Show Always (Inline)",
+          "valueType": "boolean",
+          "value": false
         }
       ]
     }

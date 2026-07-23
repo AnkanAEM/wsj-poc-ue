@@ -2,20 +2,37 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 import { API_CONFIG, getApiEndpoint } from '../../scripts/config.js';
 
 /**
- * Main block decorator
+ * Main block decorator for lead-form
  * @param {Element} block The block element
  */
 export default async function decorate(block) {
+  // Check if block has 'always-show' class or data property
+  const isAlwaysShow = block.classList.contains('always-show')
+    || block.dataset.alwaysShow === 'true'
+    || block.dataset.alwaysShow === 'true';
+
+  // Extract author-provided title/subtitle if present in block HTML
+  const authoredTitle = block.querySelector('h1, h2, h3')?.textContent || 'Schedule a Test Drive';
+  const authoredSubtitle = block.querySelector('p')?.textContent || 'Choose your preferred dealer and model. Our specialist will contact you shortly.';
+
   const container = document.createElement('div');
-  container.className = 'lead-form-container';
+  container.className = isAlwaysShow ? 'lead-form-container' : 'lead-form-modal-overlay hidden';
+
   moveInstrumentation(block, container);
 
   container.innerHTML = `
     <div class="lead-form-card">
+      <button type="button" class="lead-form-close-btn ${isAlwaysShow ? 'hidden' : ''}" aria-label="Close form">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
       <div class="lead-form-header">
         <span class="lead-form-badge">Book Your Experience</span>
-        <h2 class="lead-form-title">Schedule a Test Drive</h2>
-        <p class="lead-form-subtitle">Choose your preferred dealer and model. Our specialist will contact you shortly.</p>
+        <h2 class="lead-form-title">${authoredTitle}</h2>
+        <p class="lead-form-subtitle">${authoredSubtitle}</p>
       </div>
 
       <form class="lead-form-body" novalidate>
@@ -77,7 +94,7 @@ export default async function decorate(block) {
           <label class="lead-form-checkbox-label">
             <input type="checkbox" id="lead-consent-check" name="consentGiven" checked required />
             <span class="checkbox-custom"></span>
-            <span class="checkbox-text">I consent to being contacted by JSW Motors regarding test drive scheduling and product offers.</span>
+            <span class="checkbox-text">I consent to being contacted regarding test drive scheduling and product offers.</span>
           </label>
         </div>
 
@@ -141,9 +158,48 @@ export default async function decorate(block) {
   const btnSpinner = container.querySelector('.btn-spinner');
   const btnText = container.querySelector('.btn-text');
   const resetBtn = container.querySelector('#lead-reset-btn');
+  const closeBtn = container.querySelector('.lead-form-close-btn');
 
   let dealersList = [];
   let inventoryList = [];
+
+  // Functions to open and close modal
+  const openModal = () => {
+    if (!isAlwaysShow) {
+      container.classList.remove('hidden');
+      document.body.classList.add('lead-form-modal-open');
+    }
+  };
+
+  const closeModal = () => {
+    if (!isAlwaysShow) {
+      container.classList.add('hidden');
+      document.body.classList.remove('lead-form-modal-open');
+    }
+  };
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeModal);
+  }
+
+  // Close modal when clicking backdrop outside card
+  container.addEventListener('click', (e) => {
+    if (!isAlwaysShow && e.target === container) {
+      closeModal();
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !container.classList.contains('hidden') && !isAlwaysShow) {
+      closeModal();
+    }
+  });
+
+  // Listen to open events from dealers or inventory cards
+  window.addEventListener('open-lead-form', () => {
+    openModal();
+  });
 
   // Fetch dealers & inventory options dynamically
   const loadFormDropdowns = async () => {
@@ -189,7 +245,6 @@ export default async function decorate(block) {
         const iJson = await inventoryRes.value.json();
         inventoryList = iJson.data || [];
 
-        // Deduplicate by model or list models
         const uniqueModels = [...new Set(inventoryList.map((i) => i.model))];
         modelSelect.innerHTML = '<option value="">Select Model...</option>';
         uniqueModels.forEach((m) => {
@@ -208,6 +263,7 @@ export default async function decorate(block) {
 
   // Listen to custom inter-block selection events
   window.addEventListener('select-dealer', (e) => {
+    openModal();
     const dealer = e.detail;
     if (dealer) {
       if (dealer.city && citySelect.querySelector(`option[value="${dealer.city}"]`)) {
@@ -223,6 +279,7 @@ export default async function decorate(block) {
   });
 
   window.addEventListener('select-model', (e) => {
+    openModal();
     const modelItem = e.detail;
     if (modelItem && modelItem.model) {
       if (modelSelect.querySelector(`option[value="${modelItem.model}"]`)) {
@@ -270,7 +327,6 @@ export default async function decorate(block) {
       },
     };
 
-    // UI Loading state
     submitBtn.disabled = true;
     btnSpinner.classList.remove('hidden');
     btnText.textContent = 'Submitting Request...';
