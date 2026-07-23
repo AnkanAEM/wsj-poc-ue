@@ -50,8 +50,12 @@
         "hero",
         "cards",
         "columns",
-        "fragment"
+        "fragment",
+        "dealers",
+        "inventory",
+        "lead-form"
       ]
     }
   ]
 }
+
