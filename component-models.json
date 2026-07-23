@@ -180,6 +180,17 @@
     ]
   },
   {
+    "id": "dealers",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
     "id": "fragment",
     "fields": [
       {
@@ -212,6 +223,29 @@
         "value": "",
         "label": "Text",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "inventory",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "lead-form",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Form Title",
+        "valueType": "string",
+        "value": "Schedule a Test Drive"
       }
     ]
   }
