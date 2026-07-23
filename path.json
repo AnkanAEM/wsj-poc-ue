@@ -1,0 +1,8 @@
+{
+  "mappings": [
+    "/content/wsj-poc-ue/:/"
+  ],
+  "includes": [
+    "/content/wsj-poc-ue/"
+  ]
+}
